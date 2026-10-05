@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Егорова Жанна · Психолог · GSR · Легализация правды</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Загружаем только Cormorant Garamond -->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    /* ── палитра ── */
+    --plaster:#F2EFE2;   /* молоко — фон пластов и РАМКА ФОТО */
+    --mist:#B3C9D6;      /* голубой стол — фон страницы */
+    --sage:#7E9A72;      /* шалфей — кнопка/акцент */
+    --sage-deep:#6B8760;
+    --ink:#2B3A42;       /* заголовки */
+    --ink-soft:#41525C;  /* текст */
+    --ink-mute:#5C6E78;  /* вторичный */
+    --link:#3E6B62;      /* ссылки — родня кнопке */
+    --veil:rgba(179,201,214,.34);      
+    --veil-2:rgba(179,201,214,.46);
+    --veil-line:rgba(120,150,168,.40);
+
+    /* ── свет ─ */
+    --sh-table:58,80,96;
+    --sh-fold:150,135,110;
+    --sh-sage:95,125,85;
+
+    /* ── ШРИФТЫ: ВСЁ НА CORMORANT GARAMOND ── */
+    --font-display:'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace; /* Только для мелких тегов */
+
+    /* ── каустика ── */
+    --caustic-opacity:.34;
+    --caustic-speed:42s;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+
+  body{
+    min-height:100vh;
+    background-color:var(--mist);
+    background-image:radial-gradient(130% 120% at 90% 2%,
+      rgba(255,255,255,.34), rgba(255,255,255,0) 44%);
+    background-attachment:fixed;
+    font-family:var(--font-display); /* ★ ГЛОБАЛЬНЫЙ ШРИФТ ★ */
+    color:var(--ink-soft);
+    line-height:1.6;
+    padding:clamp(24px,6vw,72px) clamp(16px,4vw,40px);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+
+  /* SVG-фильтр для каустики */
+  .svg-defs{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
+
+  /* Общий слой каустики */
+  .caustics,
+  .hero::after{
+    background-image:
+      repeating-linear-gradient(112deg,
+        rgba(255,255,255,0) 0 24px,
+        rgba(255,255,255,.28) 29px,
+        rgba(255,255,255,0) 35px),
+      repeating-linear-gradient(58deg,
+        rgba(255,255,255,0) 0 38px,
+        rgba(214,242,236,.22) 43px,
+        rgba(255,255,255,0) 51px),
+      radial-gradient(circle at 72% 18%,
+        rgba(255,255,255,.22), transparent 44%);
+    background-repeat:repeat, repeat, no-repeat;
+    filter:url(#caustic-warp);
+    mix-blend-mode:soft-light;
+    pointer-events:none;
+    will-change:background-position, transform;
+  }
+
+  .caustics{
+    position:fixed;inset:-25%;z-index:0;
+    opacity:var(--caustic-opacity);
+    animation:causticFlow var(--caustic-speed) linear infinite alternate;
+  }
+
+  .scene{
+    position:relative;z-index:1;max-width:1060px;margin:0 auto;display:flex;flex-direction:column;gap:0;
+  }
+
+  /* ── ПЛАСТ (карта на столе) ── */
+  .layer{
+    position:relative;
+    width:var(--w,92%);
+    margin-inline:auto;
+    left:var(--dx,0%);
+    margin-top:var(--ov,0px);
+    z-index:var(--z,1);
+    background:
+      radial-gradient(120% 120% at 88% 4%,
+        rgba(255,255,255,.62), rgba(255,255,255,0) 46%),
+      var(--plaster);
+    border-radius:26px;
+    padding:clamp(24px,3.2vw,36px) clamp(20px,3vw,34px) clamp(32px,3.6vw,42px);
+    box-shadow:
+      -3px 4px 9px -1px rgba(var(--sh-table),.20),
+      -16px 20px 46px -12px rgba(var(--sh-table),.30),
+      -26px 34px 64px -22px rgba(var(--sh-table),.13),
+      inset 2px -2px 3px rgba(255,255,255,.62),
+      inset -2px 2px 6px rgba(var(--sh-fold),.20);
+    opacity:0;transform:translateY(18px);
+    transition:opacity .7s cubic-bezier(.2,.7,.2,1),
+               transform .7s cubic-bezier(.2,.7,.2,1),
+               box-shadow .35s ease;
+  }
+  .layer.is-in{opacity:1;transform:translateY(0)}
+  .layer.is-in:hover{
+    transform:translate(2px,-3px);
+    box-shadow:
+      -4px 6px 12px -1px rgba(var(--sh-table),.22),
+      -20px 26px 56px -12px rgba(var(--sh-table),.34),
+      -30px 40px 72px -22px rgba(var(--sh-table),.15),
+      inset 2px -2px 3px rgba(255,255,255,.66),
+      inset -2px 2px 6px rgba(var(--sh-fold),.22);
+  }
+
+  /* Изоляция для первой карточки */
+  .hero{overflow:hidden;isolation:isolate;}
+  .hero > *{position:relative;z-index:1;}
+  .hero::after{content:"";position:absolute;inset:0;z-index:0;border-radius:inherit;opacity:.14;animation:causticFlow 58s linear infinite alternate-reverse;}
+
+  @keyframes layerIn{to{opacity:1;transform:translateY(0)}}
+  @keyframes causticFlow{
+    from{background-position:0 0, 0 0, 50% 50%;transform:scale(1.02)}
+    to{background-position:760px -580px, -680px 520px, 54% 46%;transform:scale(1.06)}
+  }
+
+  /* ════════ ТИПОГРАФИКА ════════ */
+  
+  /* Все заголовки и тексты наследуют глобальный Serif */
+  .sec-title, 
+  .eyebrow, 
+  .name-under-photo, 
+  .badge-main, 
+  .lead, 
+  .scroll-hint,
+  .quote-block,
+  .free-slot h3,
+  .m h4,
+  .panel h5,
+  .faq dt,
+  .cta-left .price {
+    font-family:var(--font-display);
+  }
+
+  .sec-title{
+    font-size:clamp(22px,2.8vw,28px); 
+    font-weight:600;color:var(--ink);
+    letter-spacing:-.01em;margin-bottom:16px;display:flex;align-items:center;gap:10px;
+  }
+  .sec-title::before{content:"";width:4px;height:1.15em;background:var(--sage);border-radius:2px;
+    box-shadow:-1px 1px 2px rgba(var(--sh-sage),.4)}
+  
+  /* Мелкий технический текст тоже на Serif, но чуть легче */
+  .muted{color:var(--ink-mute);font-size:15px;font-family:var(--font-display);} 
+  
+  /* Шалфейная галочка вместо эмодзи */
+  .check-icon{display:inline-block;width:16px;height:16px;vertical-align:text-bottom;margin-right:6px;
+    background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%237E9A72" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>') center/contain no-repeat}
+
+  /* ════════ HERO (Обложка) ════════ */
+  .header-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    margin-bottom: 24px;
+  }
+
+  .eyebrow{
+    font-size:14px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--link);
+    margin-bottom: 10px; 
+    white-space: nowrap; 
+  }
+  
+  .badge-main{
+    display:inline-block;
+    background:var(--veil-2); 
+    color:var(--ink);
+    padding:10px 24px; 
+    border-radius:26px;
+    font-size:clamp(19px, 2.6vw, 26px); 
+    font-weight:600;   
+    letter-spacing:.01em;
+    text-align:center;
+    border:1px solid var(--veil-line);
+    box-shadow:
+      -2px 4px 10px -2px rgba(var(--sh-table),.28),
+      inset 1px -1px 2px rgba(255,255,255,.6),
+      inset -1px 1px 3px rgba(var(--sh-table),.12);
+  }
+
+  .lead{
+    font-size:clamp(18px,2.2vw,20px); /* Чуть крупнее для Serif */
+    font-weight:500;
+    line-height:1.7;
+    color:var(--ink-soft);
+    max-width:52ch;
+    margin-top:0; 
+    text-align:left;
+  }
+  .lead strong{color:var(--ink);font-weight:600}
+  
+  .scroll-hint{display:inline-flex;align-items:center;gap:8px;margin-top:20px;color:var(--link);font-weight:600;font-size:16px;text-decoration:none;}
+  .scroll-hint span{transition:transform .3s}
+  .scroll-hint:hover span{transform:translateY(3px)}
+  
+  .hero-top{
+    display:flex;
+    gap:clamp(24px,4vw,40px);
+    align-items:flex-start; 
+    flex-wrap:wrap;
+  }
+
+  .avatar-column {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    flex: 0 0 auto;
+  }
+
+  .avatar-container {
+    position: relative;
+    width: clamp(110px, 14vw, 140px); 
+    height: clamp(150px, 19vw, 190px); 
+    filter: drop-shadow(-6px 8px 12px rgba(var(--sh-table), 0.35));
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .avatar-container:hover {
+    transform: translate(2px, -4px) scale(1.02);
+  }
+  .avatar-frame {
+    width: 100%;
+    height: 100%;
+    border-radius: 40px; 
+    padding: 5px; 
+    background: var(--plaster); 
+    box-shadow: 
+      inset 0 0 0 1px rgba(255,255,255,0.4), 
+      0 2px 4px rgba(0,0,0,0.05); 
+    overflow: hidden;
+    position: relative;
+  }
+  .avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    border-radius: 35px; 
+    display: block;
+  }
+  .avatar-glare {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 40px;
+    pointer-events: none;
+    background: linear-gradient(
+      135deg, 
+      rgba(255,255,255,0.3) 0%, 
+      rgba(255,255,255,0.05) 20%, 
+      rgba(255,255,255,0) 40%,
+      rgba(255,255,255,0) 100%
+    );
+    mix-blend-mode: overlay;
+  }
+  .name-under-photo{
+    display:block;
+    text-align:center;
+    margin-top:12px;
+    font-size:clamp(20px, 3vw, 28px); 
+    font-weight:500;
+    line-height:1.2;
+    color:var(--ink);
+    letter-spacing:.02em;
+  }
+
+  .content-column {
+    flex: 1;
+    min-width: 300px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+  }
+
+  .hero-contacts{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:18px;font-size:15px}
+  .hero-contacts a{color:var(--link);text-decoration:none;font-weight:500;
+    border-bottom:1px dotted rgba(62,107,98,.45);transition:color .2s,border-color .2s}
+  .hero-contacts a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+
+  /* ── БЛОК О СЕБЕ (CEO story) ── */
+  .story-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+  .story-text p{font-size:16px;line-height:1.65;color:var(--ink-soft);margin-bottom:12px;font-family:var(--font-display);}
+  .quote-block{
+    background:var(--veil);border-left:4px solid var(--sage);padding:16px 20px;border-radius:0 16px 16px 0;
+    font-size:20px;font-style:italic;color:var(--ink);line-height:1.5;
+    box-shadow:-2px 3px 8px -2px rgba(var(--sh-table),.15);
+  }
+
+  /* ── МЕТОДЫ ── */
+  .methods-stack{display:flex;flex-direction:column}
+  .m{
+    position:relative;width:var(--mw,96%);margin-inline:auto;left:var(--mdx,0%);
+    margin-top:var(--mov,0px);z-index:var(--mz,1);
+    background:
+      radial-gradient(120% 130% at 86% 8%,
+        rgba(255,255,255,.5), rgba(255,255,255,0) 52%),
+      var(--veil);
+    border:1px solid var(--veil-line);border-radius:18px;
+    padding:18px 20px 22px;
+    box-shadow:
+      -4px 6px 14px -6px rgba(var(--sh-table),.26),
+      -2px 3px 6px  -3px rgba(var(--sh-table),.14),
+      inset  1px -1px 2px rgba(255,255,255,.55),
+      inset -1px  1px 3px rgba(var(--sh-table),.12);
+    opacity:0;transform:translateY(14px);
+    transition:opacity .6s ease,transform .6s ease,box-shadow .3s ease;
+  }
+  .m.is-in{opacity:1;transform:translateY(0)}
+  .m.is-in:hover{transform:translate(2px,-2px);
+    box-shadow:-5px 8px 18px -6px rgba(var(--sh-table),.30),
+               -2px 3px 6px -3px rgba(var(--sh-table),.16),
+               inset 1px -1px 2px rgba(255,255,255,.6),
+               inset -1px 1px 3px rgba(var(--sh-table),.14)}
+  
+  /* Заголовки методов — Serif */
+  .m h4{font-size:18px;font-weight:600;color:var(--ink);margin-bottom:8px;
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--font-display);}
+  
+  /* Теги остаются моноширинными для контраста структуры */
+  .m h4 .tag{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;
+    background:rgba(126,154,114,.18);color:var(--link);padding:2px 9px;border-radius:20px}
+  
+  /* Текст описания — Serif */
+  .m p{font-size:15px;color:var(--ink-soft);line-height:1.55;margin-bottom:8px;font-family:var(--font-display);}
+  
+  /* Списки — Serif */
+  .m ul{list-style:none;padding-left:0;margin-bottom:10px}
+  .m li{font-size:15px;color:var(--ink-soft);padding-left:22px;position:relative;margin-bottom:4px;font-family:var(--font-display);}
+  .m li::before{content:"";position:absolute;left:0;top:7px;width:14px;height:14px;
+    background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%237E9A72" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>') center/contain no-repeat}
+  
+  /* Результаты — Serif */
+  .m .res{display:block;margin-top:10px;font-size:14px;font-weight:500;
+    background:rgba(126,154,114,.16);color:#3c5a39;padding:6px 14px;border-radius:20px;line-height:1.4;font-family:var(--font-display);}
+
+  /* геометрия методов */
+  .m-legal{background:            /* плоско и открыто */
+    radial-gradient(140% 150% at 82% 0%,
+      rgba(255,255,255,.78), rgba(255,255,255,0) 60%),
+    var(--veil-2)}
+
+  /* ── ЦИФРЫ ── */
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-top:20px}
+  .stat{background:var(--veil);border:1px solid var(--veil-line);border-radius:16px;
+    padding:16px 14px;text-align:center;
+    box-shadow:-3px 4px 10px -5px rgba(var(--sh-table),.2),
+               inset 1px -1px 1px rgba(255,255,255,.5)}
+  
+  /* Большие цифры — Serif Bold */
+  .stat b{display:block;font-size:clamp(32px,5vw,52px);font-weight:700;
+    letter-spacing:-.02em;line-height:1;color:var(--ink);font-family:var(--font-display);}
+  .stat b .u{display:none} 
+  
+  /* Подписи под цифрами — Serif Regular */
+  .stat span{display:block;margin-top:8px;font-size:14px;color:var(--ink-mute);line-height:1.35;font-family:var(--font-display);}
+
+  /* ── БЕСПЛАТНОЕ МЕСТО ── */
+  .free-slot{
+    background:var(--veil-2); 
+    border:1px solid var(--sage);
+    border-radius:20px;
+    padding:24px;
+    text-align:center;
+    box-shadow:
+      -4px 6px 14px -6px rgba(var(--sh-sage),.25),
+      inset 1px -1px 2px rgba(255,255,255,.6);
+    margin-top:20px;
+  }
+  .free-slot h3{font-size:26px;color:var(--ink);margin-bottom:8px}
+  .free-slot p{font-size:16px;color:var(--ink-soft);margin-bottom:16px;line-height:1.5;font-family:var(--font-display);}
+  
+  /* Кнопка бесплатного места — Serif */
+  .btn-free{
+    display:inline-block;background:var(--sage);color:#fff;
+    padding:12px 28px;border-radius:30px;font-size:16px;font-weight:600;text-decoration:none;
+    box-shadow:0 4px 12px -4px rgba(var(--sh-sage),.4);
+    transition:all .2s ease;font-family:var(--font-display);
+  }
+  .btn-free:hover{background:var(--sage-deep);transform:translateY(-2px);box-shadow:0 6px 16px -4px rgba(var(--sh-sage),.5)}
+
+  /* ── ПРОЦЕСС + FAQ ── */
+  .two{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+  .panel{background:var(--veil);border:1px solid var(--veil-line);border-radius:16px;padding:18px 20px;
+    box-shadow:-3px 4px 10px -5px rgba(var(--sh-table),.2),
+               inset 1px -1px 1px rgba(255,255,255,.5)}
+  
+  /* Заголовки панелей — Serif */
+  .panel h5{font-size:16px;font-weight:600;color:var(--ink);margin-bottom:10px;letter-spacing:.01em;font-family:var(--font-display);}
+  
+  /* Шаги процесса — Serif */
+  .steps{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .steps li{display:flex;gap:12px;font-size:15px;color:var(--ink-soft);font-family:var(--font-display);}
+  
+  /* Кружки с номерами шагов — Serif */
+  .steps li b{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--sage);
+    color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;
+    box-shadow:-1px 2px 4px rgba(var(--sh-sage),.45);font-family:var(--font-display);}
+  
+  /* FAQ — Serif */
+  .faq dt{font-size:15px;font-weight:600;color:var(--ink);margin-top:12px;font-family:var(--font-display);}
+  .faq dt:first-child{margin-top:0}
+  .faq dd{font-size:15px;color:var(--ink-soft);margin:2px 0 0;font-family:var(--font-display);}
+
+  /* ── СЕРТИФИКАТЫ ── */
+  .certs ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px 22px}
+  .certs li{position:relative;padding:6px 0 6px 28px;font-size:15px;color:var(--ink-soft);
+    border-bottom:1px dashed rgba(120,150,168,.3);font-family:var(--font-display);}
+  .certs li::before{content:"";position:absolute;left:0;top:8px;width:16px;height:16px;
+    background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%237E9A72" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>') center/contain no-repeat}
+  .certs li b{color:var(--ink);font-weight:600}
+
+  /* ── CTA / КОНТАКТЫ ── */
+  .cta-card{display:flex;flex-wrap:wrap;gap:22px;justify-content:space-between;align-items:center}
+  .cta-left .price{font-size:clamp(24px,3.5vw,32px);font-weight:700;color:var(--ink);letter-spacing:-.01em;font-family:var(--font-display);}
+  .cta-left .price small{font-size:15px;font-weight:500;color:var(--ink-mute);letter-spacing:0;font-family:var(--font-display);}
+  .cta-left .free-note{display:inline-block;margin-top:8px;font-size:15px;font-weight:600;color:#3c5a39;
+    background:rgba(126,154,114,.16);padding:4px 14px;border-radius:20px;font-family:var(--font-display);}
+  .cta-right{display:flex;flex-direction:column;align-items:flex-end;gap:14px}
+  
+  /* Главная кнопка записи — Serif */
+  .btn{ /* ЭТАЛОН — не трогаем структуру, меняем только шрифт */
+    display:inline-block;background:
+      radial-gradient(120% 130% at 80% 12%,
+        rgba(255,255,255,.30), rgba(255,255,255,0) 55%),
+      var(--sage);
+    color:#fff;padding:14px 32px;border-radius:30px;font-size:17px;font-weight:600;
+    text-decoration:none;border:none;cursor:pointer;white-space:nowrap;
+    box-shadow:
+      -4px 6px 12px -4px rgba(var(--sh-sage),.50),
+      -10px 14px 26px -8px rgba(var(--sh-sage),.32),
+      inset  2px -2px 3px rgba(255,255,255,.35),
+      inset -2px  2px 4px rgba(58,82,52,.32);
+    transition:transform .25s ease,box-shadow .25s ease,background .25s ease;
+    font-family:var(--font-display); /* ★ SERIF В КНОПКЕ ★ */
+  }
+  .btn:hover{background:
+      radial-gradient(120% 130% at 80% 12%,
+        rgba(255,255,255,.34), rgba(255,255,255,0) 55%),
+      var(--sage-deep);
+    transform:translate(2px,-3px);
+    box-shadow:
+      -6px 9px 16px -4px rgba(var(--sh-sage),.52),
+      -16px 22px 38px -10px rgba(var(--sh-sage),.34),
+      inset  2px -2px 3px rgba(255,255,255,.4),
+      inset -2px  2px 4px rgba(58,82,52,.34);}
+  .btn:active{transform:translate(0,0);
+    box-shadow:-2px 3px 6px -3px rgba(var(--sh-sage),.45),
+      inset 2px -2px 3px rgba(255,255,255,.25),
+      inset -2px 2px 5px rgba(58,82,52,.4);}
+  
+  /* Контактные данные внизу — Serif */
+  .contact-lines{display:flex;flex-direction:column;gap:6px;text-align:right;font-size:15px;font-family:var(--font-display);}
+  .contact-lines a{color:var(--link);text-decoration:none;font-weight:500;
+    border-bottom:1px dotted rgba(62,107,98,.45);transition:color .2s,border-color .2s}
+  .contact-lines a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+  
+  footer{max-width:1060px;margin:26px auto 0;text-align:center;font-size:14px;color:rgba(43,58,66,.55);font-family:var(--font-display);}
+
+  /* ── АДАПТИВ ── */
+  @media (max-width:860px){
+    .layer{--dx:0% !important;--w:100% !important;--ov:0px !important}
+    .m{--mdx:0% !important;--mw:100% !important;--mov:0px !important}
+    .stats-grid{grid-template-columns:repeat(2,1fr)}
+    .two{grid-template-columns:1fr}
+    .certs ul{grid-template-columns:1fr}
+    .story-grid{grid-template-columns:1fr}
+    .cta-card{flex-direction:column;align-items:stretch;text-align:center}
+    .cta-right{align-items:center}
+    .contact-lines{text-align:center}
+    .hero-top{justify-content:center;text-align:center}
+    .lead{margin-inline:auto}
+    :root{--caustic-opacity:.22;--caustic-speed:54s}
+    .hero::after{opacity:.08}
+  }
+  @media (max-width:768px){
+    .hero-top{
+      flex-direction:column;
+      align-items:center;
+      text-align:center;
+    }
+    .content-column{
+      width:100%;
+      align-items:center; 
+    }
+    .header-group {
+      width: 100%;
+    }
+    .eyebrow, .badge-main, .lead, .hero-contacts {
+      text-align:center;
+    }
+    .lead{
+      max-width:100%;
+    }
+  }
+  @media (max-width:480px){
+    .stats-grid{grid-template-columns:1fr 1fr;gap:10px}
+    .hero::after{display:none}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .layer,.m{opacity:1 !important;transform:none !important;transition:none}
+    .caustics,.hero::after{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- Фильтр каустики -->
+<svg class="svg-defs" aria-hidden="true" focusable="false">
+  <filter id="caustic-warp" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.011 0.016" numOctaves="2" seed="11" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="72" xChannelSelector="R" yChannelSelector="G" result="warped"/>
+    <feGaussianBlur in="warped" stdDeviation="1.25" result="blurred"/>
+    <feComponentTransfer in="blurred" result="final">
+      <feFuncA type="linear" slope="1.25" intercept="-0.03"/>
+    </feComponentTransfer>
+  </filter>
+</svg>
+
+<div class="caustics" aria-hidden="true"></div>
+
+<main class="scene">
+
+  <!-- 1 · HERO — Обложка -->
+  <section class="layer hero is-in" style="--w:92%;--dx:2%;--ov:0px;--z:1">
+    <div class="hero-top">
+      
+      <!-- ЛЕВАЯ КОЛОНКА: Фото + Имя -->
+      <div class="avatar-column">
+        <div class="avatar-container">
+          <div class="avatar-frame">
+            <img src="photo.jpg" alt="Егорова Жанна" class="avatar-img">
+            <div class="avatar-glare"></div>
+          </div>
+        </div>
+        <span class="name-under-photo">Жанна</span>
+      </div>
+
+      <!-- ПРАВАЯ КОЛОНКА -->
+      <div class="content-column">
+        
+        <!-- ★ ГРУППА ЗАГОЛОВКА (Симметрия Eyebrow и Badge) ★ -->
+        <div class="header-group">
+          <div class="eyebrow">GSR · Легализация правды · Цифровая психология</div>
+          <span class="badge-main">Мастер психологической гармонии</span>
+        </div>
+        
+        <!-- ★ ТЕКСТ ЛИДА ★ -->
+        <p class="lead">
+          <strong>Помогаю снять внутренние блоки и вернуть ясность</strong> — без долгих разборов прошлого.<br>
+          Работаю методами GSR, Легализации правды и Цифровой психологии.
+          После первых сессий — снижение тревожности, понимание целей и готовность двигаться дальше.
+        </p>
+        
+        <div class="hero-contacts">
+          <span>📍 Москва · онлайн по всему миру</span>
+          <a href="tel:+79250104462">📞 +7 925 010 4462</a>
+          <a href="mailto:191513@bk.ru">✉️ 191513@bk.ru</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Мини-блок цифр -->
+    <div class="stats-grid">
+      <div class="stat"><b>1890</b><span>проведённых сессий</span></div>
+      <div class="stat"><b>88%</b><span>снижение тревожности</span></div>
+      <div class="stat"><b>4–6</b><span>сессий до результата</span></div>
+    </div>
+  </section>
+
+  <!-- 2 · О СЕБЕ (CEO Story) -->
+  <section class="layer" style="--w:96%;--dx:1%;--ov:-18px;--z:2">
+    <div class="sec-title">Обо мне</div>
+    <div class="story-grid">
+      <div class="story-text">
+        <p><strong>22 года в бизнесе — теперь работаю с внутренним миром человека.</strong></p>
+        <p>22 года я управляла компанией как генеральный директор: строила процессы, выводила бизнес через кризисы и пандемию, проходила десятки проверок без штрафов, формировала команду, в которой люди росли и оставались годами. Этот опыт научил меня главному — видеть систему целиком и находить самый короткий путь к результату.</p>
+        <p>Когда я пришла в психологию, обнаружила, что те же принципы работают и с внутренним миром: не нужно долго копаться в прошлом, если можешь точно найти блок и снять его. Поэтому в работе с клиентами я не растягиваю процесс — двигаюсь к результату быстро и системно, но бережно.</p>
+      </div>
+      <div class="quote-block">
+        «Я не верю в "долго и мучительно". Верю в точно и вовремя.»
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · МЕТОДЫ -->
+  <section class="layer" style="--w:94%;--dx:-1%;--ov:-16px;--z:3">
+    <div class="sec-title">Методы работы</div>
+    <p class="muted" style="margin-bottom:16px">Не существует одного инструмента на все случаи. Я подбираю метод — или их комбинацию — под конкретный запрос.</p>
+    
+    <div class="methods-stack">
+      <!-- GSR -->
+      <article class="m" style="--mw:90%;--mdx:5%;--mov:0px;--mz:1">
+        <h4>GSR <span class="tag">Глубинная система развития</span></h4>
+        <p><strong>Для кого:</strong> чувствуете «застой», но не понимаете причин; хотите быстро запустить внутренние ресурсы без долгого анализа прошлого.</p>
+        <ul>
+          <li>Диагностика текущего состояния</li>
+          <li>Выявление ограничивающих установок</li>
+          <li>Работа с подсознательными блоками через метод GSR</li>
+        </ul>
+        <span class="res"><span class="check-icon"></span> Снижение тревожности на 30–50%, ясность целей, рост уверенности за 3–5 сессий.</span>
+      </article>
+
+      <!-- Легализация -->
+      <article class="m m-legal" style="--mw:92%;--mdx:1%;--mov:-12px;--mz:2">
+        <h4>Легализация правды</h4>
+        <p><strong>Для кого:</strong> живёте с чувством вины, обидами, непроработанными ситуациями из прошлого, которые тянут назад.</p>
+        <ul>
+          <li>Выявление скрытых установок</li>
+          <li>Принятие фактов без осуждения</li>
+          <li>Перестройка мышления на конструктив</li>
+        </ul>
+        <span class="res"><span class="check-icon"></span> Освобождение от груза прошлого, снижение чувства вины на 40–60%, готовность двигаться вперёд.</span>
+      </article>
+
+      <!-- Цифровая психология -->
+      <article class="m m-digital" style="--mw:88%;--mdx:-3%;--mov:-12px;--mz:3">
+        <h4>Цифровая психология</h4>
+        <p><strong>Для кого:</strong> замечаете повторяющиеся сценарии в жизни и хотите понять, почему так происходит; нужен системный подход к изменениям.</p>
+        <ul>
+          <li>Сбор данных (дата рождения)</li>
+          <li>Анализ числовых кодов</li>
+          <li>Выявление повторяющихся паттернов</li>
+          <li>Коррекция через осознанность</li>
+        </ul>
+        <span class="res"><span class="check-icon"></span> Понимание причин повторяющихся ситуаций, снижение тревожности, чёткие шаги для изменений.</span>
+      </article>
+
+      <!-- Таро (Полная карточка) -->
+      <article class="m" style="--mw:100%;--mdx:0%;--mov:-12px;--mz:4">
+        <h4>Таро — быстрые ответы</h4>
+        <p><strong>Для кого:</strong> нужен точечный ответ на конкретный вопрос или прогноз на ближайшие 3–6 месяцев; нет времени на глубокую проработку.</p>
+        <ul>
+          <li>Расклад помогает увидеть варианты развития событий</li>
+          <li>Выбор наиболее подходящего пути</li>
+          <li>Подходит для отношений, вопросов о работе и ключевых решений</li>
+        </ul>
+        <span class="res"><span class="check-icon"></span> Ясность в конкретной ситуации здесь и сейчас.</span>
+      </article>
+    </div>
+  </section>
+
+  <!-- 4 · ЦИФРЫ -->
+  <section class="layer" style="--w:90%;--dx:-3%;--ov:-14px;--z:4">
+    <div class="sec-title">Результаты в цифрах</div>
+    <div class="stats-grid">
+      <div class="stat"><b>1890</b><span>проведённых сессий</span></div>
+      <div class="stat"><b>88%</b><span>клиентов отмечают снижение тревожности после первых встреч</span></div>
+      <div class="stat"><b>4–6</b><span>сессий для устойчивого результата</span></div>
+      <div class="stat"><b>22</b><span>года управленческого опыта в основе подхода</span></div>
+    </div>
+  </section>
+
+  <!-- 5 · БЕСПЛАТНОЕ МЕСТО -->
+  <section class="layer" style="--w:86%;--dx:-2%;--ov:-12px;--z:5">
+    <div class="free-slot">
+      <h3>2–3 бесплатных места в месяц</h3>
+      <p>Каждый месяц я выделяю несколько мест на бесплатные сессии GSR.<br>Приоритет — клиентам в сложной жизненной ситуации или тем, кто хочет попробовать метод перед началом курса.</p>
+      <a href="https://wa.me/79250104462?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%2C%20%D0%BC%D0%BE%D0%B6%D0%BD%D0%BE%20%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B8%D1%82%D1%8C%20%D0%B1%D0%B5%D1%81%D0%BF%D0%BB%D0%B0%D1%82%D0%BD%D0%BE%D0%B5%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE%20%D0%BD%D0%B0%20%D1%81%D0%B5%D1%81%D1%81%D0%B8%D1%8E%20GSR%3F" target="_blank" class="btn-free">Получить бесплатное место</a>
+    </div>
+  </section>
+
+  <!-- 6 · ПРОЦЕСС + FAQ -->
+  <section class="layer" style="--w:94%;--dx:-5%;--ov:-12px;--z:6">
+    <div class="two">
+      <div class="panel">
+        <h5>Как мы будем работать</h5>
+        <ol class="steps">
+          <li><b>1</b><span><strong>Запись.</strong> Напишите мне в WhatsApp — обсудим удобное время.</span></li>
+          <li><b>2</b><span><strong>Консультация (15 мин).</strong> Знакомство, разбор запроса, подбор метода. Без обязательств.</span></li>
+          <li><b>3</b><span><strong>Сессии.</strong> Онлайн (Zoom, TG, VK, WhatsApp) или очно в Москве. 60–90 мин. Раз в неделю или две.</span></li>
+          <li><b>4</b><span><strong>Результат.</strong> Первые изменения после 1–2 встреч. Устойчивый результат через 4–6 сессий.</span></li>
+        </ol>
+        <p class="muted" style="margin-top:12px;font-size:14px">Стоимость: от 7 000 ₽ за сессию.</p>
+      </div>
+      <div class="panel">
+        <h5>Частые вопросы</h5>
+        <dl class="faq">
+          <dt>Сколько сессий нужно?</dt><dd>В среднем 4–6 для устойчивого результата, но первые изменения заметны уже после 1–2 встреч.</dd>
+          <dt>Подходит ли GSR детям?</dt><dd>Метод применяется с 16 лет.</dd>
+          <dt>Можно ли сочетать методы?</dt><dd>Да, я подбираю комбинацию индивидуально под запрос.</dd>
+          <dt>Как подготовиться?</dt><dd>Ничего особенного — просто будьте готовы говорить о своём запросе.</dd>
+          <dt>Можно прийти с одной ситуацией?</dt><dd>Да. Быстрый ответ — Таро. Глубже — подберём метод.</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · ОБРАЗОВАНИЕ -->
+  <section class="layer certs" style="--w:88%;--dx:-2%;--ov:-12px;--z:7">
+    <div class="sec-title">Образование и сертификаты</div>
+    <ul>
+      <li><b>Базовое высшее:</b> Диплом экономиста (бухгалтерский учёт и аудит), 2003 г.</li>
+      <li><b>GSR:</b> Тренинг Дмитрия Устинова, 2021 г. (модули 1, 1PRO, 2, 2PRO, 4)</li>
+      <li><b>Легализация правды:</b> Базовый уровень, Диплом «Центр психологической практики», 2024 г.</li>
+      <li><b>Цифровая психология:</b> Анализ и коррекция паттернов, Диплом Академии современных психологических технологий, 2025 г.</li>
+      <li><b>Процесс Хоффмана:</b> Интеграция элементов личности, 2018 г.</li>
+      <li><b>Хакаматон: Баланс:</b> Эмоциональный интеллект, управление стрессом, 2020 г.</li>
+    </ul>
+    <p class="muted" style="margin-top:12px">Сканы документов предоставляю по запросу.</p>
+  </section>
+
+  <!-- 8 · CTA / КОНТАКТЫ -->
+  <section class="layer" id="book" style="--w:92%;--dx:0%;--ov:-16px;--z:8">
+    <div class="cta-card">
+      <div class="cta-left">
+        <div class="price">Готовы сделать шаг?</div>
+        <span class="free-note">Напишите мне в WhatsApp — отвечу лично.</span>
+      </div>
+      <div class="cta-right">
+        <!-- Только WhatsApp -->
+        <a class="btn" href="https://wa.me/79250104462?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%2C%20%D0%B7%D0%B0%D0%BF%D0%B8%D1%81%D0%B0%D1%82%D1%8C%D1%81%D1%8F%20%D0%BD%D0%B0%20%D0%B1%D0%B5%D1%81%D0%BF%D0%BB%D0%B0%D1%82%D0%BD%D1%83%D1%8E%20%D0%BA%D0%BE%D0%BD%D1%81%D1%83%D0%BB%D1%8C%D1%82%D0%B0%D1%86%D0%B8%D1%8E" target="_blank" rel="noopener">Записаться на консультацию</a>
+        <div class="contact-lines">
+          <!-- Номер убран, осталась только почта -->
+          <a href="mailto:191513@bk.ru">191513@bk.ru</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>Егорова Жанна · Психолог · GSR · Москва &nbsp;—&nbsp; не является публичной офертой</footer>
+
+<script>
+  // Плавное вскрытие пластов при скролле
+  (function(){
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var els = document.querySelectorAll('.layer, .m');
+    if(reduce || !('IntersectionObserver' in window)){
+      els.forEach(function(e){ e.classList.add('is-in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add('is-in'); io.unobserve(en.target); }
+      });
+    }, { threshold:0.12, rootMargin:'0px 0px -8% 0px' });
+    els.forEach(function(e){ io.observe(e); });
+  })();
+</script>
+
+</body>
+</html>
